@@ -13,33 +13,92 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function askManagerOfficeNumber(userPassedOfficeNumber) {
-    return userPassedOfficeNumber
+function promptForManagerOfficeNumber() {
+    return inquirer.prompt([
+        {
+            name: 'officeNumber',
+            message: 'What is their office number?'
+        }
+    ])
 }
 
-function askEngineerGithub(userPassedGithub) {
-    return userPassedGithub
+function promptForEngineerGithub() {
+    return inquirer.prompt([
+        {
+            name: 'github',
+            message: 'What is their github?'
+        }
+    ])
 }
 
-function askInternSchool(userPassedSchool) {
-    return userPassedSchool
+function promptForInternSchool() {
+    return inquirer.prompt([
+        {
+            name: 'school',
+            message: 'What school do they attend?'
+        }
+    ])
 }
 
-function askRole() {
-    return inquirer.prompt(
+function promptRole() {
+    return inquirer.prompt([
         {
             name: 'employeeRole',
-            message: 'What role would you like to add to your team?'
+            message: 'What role would you like to add to your team? Enter Manager, Engineer, or Intern'
         }
-    )
+    ])
 }
 
-// function getTeamData() {
-//     let stillBuildingTeam = true
-//     while(stillBuildingTeam) {
-        
-//     }
-// }
+function promptForBasicEmployeeInfo() {
+    return inquirer.prompt([
+        {
+            name: 'name',
+            message: 'What is the employees name?'
+        },
+        {
+            name: 'id',
+            message: 'What is their ID number?'
+        },
+        {
+            name: 'email',
+            message: 'What is their email?'
+        }
+    ])
+}
+
+function askToContinue() {
+    return inquirer.prompt([
+        {
+            name: 'continue',
+            message: 'Would you like to keep adding employees to your team? (yes/no):'
+        }
+    ])
+}
+
+function promptForTeamData() {
+    let stillBuildingTeam = true
+    while(stillBuildingTeam) {
+        promptForBasicEmployeeInfo()
+        promptRole()
+            .then(role => {
+                if (role === 'Manager') {
+                    promptForManagerOfficeNumber()
+                }
+                else if (role === 'Engineer') {
+                    promptForEngineerGithub()
+                }
+                else if (role === 'Intern') {
+                    promptForInternSchool()
+                }
+            })
+        askToContinue()
+            .then(keepGoing => {
+                if (keepGoing === 'yes') {
+                    stillBuildingTeam = false;
+                }
+            })
+    }
+}
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
