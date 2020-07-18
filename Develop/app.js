@@ -13,92 +13,147 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function promptForManagerOfficeNumber() {
-    return inquirer.prompt([
-        {
-            name: 'officeNumber',
-            message: 'What is their office number?'
-        }
-    ])
-}
 
-function promptForEngineerGithub() {
-    return inquirer.prompt([
-        {
-            name: 'github',
-            message: 'What is their github?'
-        }
-    ])
-}
-
-function promptForInternSchool() {
-    return inquirer.prompt([
-        {
-            name: 'school',
-            message: 'What school do they attend?'
-        }
-    ])
-}
-
+// Asks user for employee's role then returns a string. 
 function promptRole() {
     return inquirer.prompt([
         {
-            name: 'employeeRole',
-            message: 'What role would you like to add to your team? Enter Manager, Engineer, or Intern'
+            name: "employeeRole",
+            message: "What role would you like to add to your team? Enter Manager, Engineer, or Intern: "
         }
     ])
 }
 
-function promptForBasicEmployeeInfo() {
-    return inquirer.prompt([
-        {
-            name: 'name',
-            message: 'What is the employees name?'
-        },
-        {
-            name: 'id',
-            message: 'What is their ID number?'
-        },
-        {
-            name: 'email',
-            message: 'What is their email?'
-        }
-    ])
-}
-
+// Asks the user if they would like to continue to add team members after and returns a string.
 function askToContinue() {
     return inquirer.prompt([
         {
-            name: 'continue',
-            message: 'Would you like to keep adding employees to your team? (yes/no):'
+            name: "proceed",
+            message: "Would you like to keep adding employees to your team? (yes/no): " 
         }
     ])
 }
 
-function promptForTeamData() {
+// Asks the user for the manager data.
+function promptManagerData() {
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "What is the employee's name?"
+        },
+        {
+            name: "id",
+            message: "What is their ID number?"
+        },
+        {
+            name: "email",
+            message: "What is their email?"
+        },
+        {
+            name: "officeNumber",
+            message: "What is their office number?"
+        }
+    ])
+}
+
+// Asks user to input engineer data.
+function promptEngineerData() {
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "What is the employee's name?"
+        },
+        {
+            name: "id",
+            message: "What is their ID number?"
+        },
+        {
+            name: "email",
+            message: "What is their email?"
+        },
+        {
+            name: "github",
+            message: "What is their github username?"
+        }
+    ])
+}
+
+// Asks user for input intern data.
+function promptInternData() {
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "What is the employee's name?"
+        },
+        {
+            name: "id",
+            message: "What is their ID number?"
+        },
+        {
+            name: "email",
+            message: "What is their email?"
+        },
+        {
+            name: "school",
+            message: "Which school did that attend?"
+        }
+    ])
+}
+
+function buildTeam() {
     let stillBuildingTeam = true
+    let employees = []
+
     while(stillBuildingTeam) {
-        promptForBasicEmployeeInfo()
+        //Ask user for employee data.
         promptRole()
-            .then(role => {
-                if (role === 'Manager') {
-                    promptForManagerOfficeNumber()
+            .then(empRole => {
+                if (empRole === 'Manager') {
+                    let newManager = new Manager()
+                    promptManagerData().then(managerData => {
+                        newManager.name = managerData.name
+                        newManager.id = managerData.id
+                        newManager.email = managerData.email
+                        newManager.officeNumber = officeNumber
+                    })
+                    employees.push(newManager)
                 }
-                else if (role === 'Engineer') {
-                    promptForEngineerGithub()
+                else if (empRole === 'Engineer') {
+                    let newEngineer = new Engineer()
+                    promptEngineerData().then(engineerData => {
+                        newEngineer.name = engineerData.name
+                        newEngineer.id = engineerData.id
+                        newEngineer.email = engineerData.email
+                        newEngineer.github = engineerData.github
+                    })
+                    employees.push(newEngineer)
                 }
-                else if (role === 'Intern') {
-                    promptForInternSchool()
+                else if (empRole === 'Intern') {
+                    let newIntern = new Intern()
+                    promptInternData().then(internData => {
+                        newIntern.name = internData.name
+                        newIntern.id = internData.id
+                        newIntern.email = internData.email
+                        newIntern.school = internData.school
+                    })
+                    employees.push(newIntern)
                 }
             })
+
+        //Asks user if they want to keep building their team.
         askToContinue()
-            .then(keepGoing => {
-                if (keepGoing === 'yes') {
-                    stillBuildingTeam = false;
+            .then(answer => {
+                if (answer.proceed === 'no') {
+                    stillBuildingTeam = false
                 }
             })
     }
+
+    //render(employees) //this correct?
 }
+
+buildTeam()
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -119,3 +174,15 @@ function promptForTeamData() {
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+
+// inquirer.prompt([
+//     {
+//         name: "proceed",
+//         message: "Would you like to keep adding people to your team? (yes/no)"
+//     }
+// ]).then(answer => {
+//     if(answer.proceed === "no") {
+//         stillBuildingTeam = false
+//     }
+// })

@@ -19,12 +19,8 @@ class Employee {
     }
 
     getRole() {
-        return 'Employee'
+        return "Employee"
     }
 }
-
-const mike = new Employee("mike", 1, "dev@mike")
-console.log(mike.getName());
-console.log(mike.getRole());
 
 module.exports = Employee
