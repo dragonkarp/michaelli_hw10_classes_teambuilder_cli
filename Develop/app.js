@@ -9,6 +9,7 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Choices = require("inquirer/lib/objects/choices");
 
 
 // Write code to use inquirer to gather information about the development team members,
@@ -17,9 +18,11 @@ const render = require("./lib/htmlRenderer");
 // Asks user for employee's role then returns a string. 
 function promptRole() {
     return inquirer.prompt([
-        {
-            name: "employeeRole",
-            message: "What role would you like to add to your team? Enter Manager, Engineer, or Intern: "
+        { 
+            type: "list",
+            name: "typeOfEmployee",
+            message: "What role would you like to add to your team? Enter Manager, Engineer, or Intern: ",
+            choices: ["Manager", "Engineer", "Intern", "exit"]
         }
     ])
 }
@@ -100,56 +103,57 @@ function promptInternData() {
     ])
 }
 
+let employees = []
 function buildTeam() {
-    let stillBuildingTeam = true
-    let employees = []
 
-    while(stillBuildingTeam) {
         //Ask user for employee data.
         promptRole()
             .then(empRole => {
-                if (empRole === 'Manager') {
+                if (empRole.typeOfEmployee === 'Manager') {
                     let newManager = new Manager()
                     promptManagerData().then(managerData => {
                         newManager.name = managerData.name
                         newManager.id = managerData.id
                         newManager.email = managerData.email
-                        newManager.officeNumber = officeNumber
+                        newManager.officeNumber = managerData.officeNumber
+                        employees.push(newManager)
+                        buildTeam()
                     })
-                    employees.push(newManager)
+                    
                 }
-                else if (empRole === 'Engineer') {
+                else if (empRole.typeOfEmployee === 'Engineer') {
                     let newEngineer = new Engineer()
                     promptEngineerData().then(engineerData => {
                         newEngineer.name = engineerData.name
                         newEngineer.id = engineerData.id
                         newEngineer.email = engineerData.email
                         newEngineer.github = engineerData.github
+                        employees.push(newEngineer)
+                        buildTeam()
                     })
-                    employees.push(newEngineer)
+                    
                 }
-                else if (empRole === 'Intern') {
+                else if (empRole.typeOfEmployee === 'Intern') {
                     let newIntern = new Intern()
                     promptInternData().then(internData => {
                         newIntern.name = internData.name
                         newIntern.id = internData.id
                         newIntern.email = internData.email
                         newIntern.school = internData.school
+                        employees.push(newIntern)
+                        buildTeam()
                     })
-                    employees.push(newIntern)
+                    
+                }
+                else {
+                  const output = render(employees) //this correct?
+                  fs.writeFile(outputPath, output, (err) => {
+                    if (err) throw err
+                    console.log("success")
+                  })
+                  console.log(output)
                 }
             })
-
-        //Asks user if they want to keep building their team.
-        askToContinue()
-            .then(answer => {
-                if (answer.proceed === 'no') {
-                    stillBuildingTeam = false
-                }
-            })
-    }
-
-    //render(employees) //this correct?
 }
 
 buildTeam()
