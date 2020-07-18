@@ -11,10 +11,6 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 const Choices = require("inquirer/lib/objects/choices");
 
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
 // Asks user for employee's role then returns a string. 
 function promptRole() {
     return inquirer.prompt([
@@ -93,10 +89,11 @@ function promptInternData() {
     ])
 }
 
+// New employees are represented as objects and pushed to employees.
 let employees = []
-function buildTeam() {
 
-        //Ask user for employee data.
+function buildTeam() {
+        // Ask user for employee data.
         promptRole()
             .then(empRole => {
                 if (empRole.typeOfEmployee === 'Manager') {
@@ -134,20 +131,25 @@ function buildTeam() {
                         buildTeam()
                     })
                     
-                }
+                }  // When the user exits, the file is created and saved to output/. 
                 else {
-                  const output = render(employees) //this correct?
+                  const output = render(employees)
                   fs.writeFile(outputPath, output, (err) => {
                     if (err) throw err
                     console.log("success")
                   })
-                  console.log(output)
+                  //console.log(output)
                 }
             })
 }
 
+// Main function.
 buildTeam()
 
+
+
+// Write code to use inquirer to gather information about the development team members,
+// and to create objects for each team member (using the correct classes as blueprints!)
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
