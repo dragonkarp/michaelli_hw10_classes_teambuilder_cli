@@ -84,7 +84,7 @@ function promptInternData() {
         },
         {
             name: "school",
-            message: "Which school did that attend?"
+            message: "Which school did they attend?"
         }
     ])
 }
